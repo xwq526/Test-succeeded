@@ -440,9 +440,9 @@ public class MySingleList {
             if (fast == slow) {
                 break;
             }
-            if (this.head == null || this.head.next == null) {
-                return null;
-            }
+        }
+        if (this.head == null || this.head.next == null) {
+            return null;
         }
         slow = this.head;
         while (slow != fast) {
