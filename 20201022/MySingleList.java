@@ -432,16 +432,19 @@ public class MySingleList {
     //    给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
     //这题要一定要画图理解（notice）
     public Node detectCycle() {
+        if (this.head == null || this.head.next == null) {
+            return null;
+        }
         Node fast = head;
         Node slow = head;
         while (fast != null && fast.next != null) {
             fast = fast.next.next;
-            slow = slow.next.next;
+            slow = slow.next;
             if (fast == slow) {
                 break;
             }
         }
-        if (this.head == null || this.head.next == null) {
+        if (fast == null || fast.next == null) {
             return null;
         }
         slow = this.head;
