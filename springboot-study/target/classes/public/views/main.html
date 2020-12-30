@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script type="text/javascript" src="../js/jquery@3.3.1/jquery.js"></script>
+    <script>
+        function addArticle() {
+            // alert("add article")
+            window.location.href = "article.html?type=add"
+        }
+        function modifyArticle(id){
+            // alert("modify article id =" + id)
+            window.location.href = "article.html?type=modify&id="+id;
+        }
+        function deleteArticle(id){
+            alert("delete article id="+ id)
+            //ajax请求，get方法url?id=xxx
+        }
+        $(function () {
+            $.ajax({
+                url:"../data/articleList.json",
+                type:"get",//这是默认的，可以不写
+                contentType:"json",//响应的数据类型
+                success:function (resp) {
+                    // alert(JSON.stringify(resp));
+                    if (resp.success) {
+                        let data = resp.data;
+                        let content = "";
+                        //作业：想一下，实现新增文章业务，删除，修改文章，怎么实现？
+                        //新增按钮只需要一个，修改，删除按钮和文章绑定
+                        //content拼接的内容，加上按钮，需要根据按钮id绑定点击事件，事件中做ajax请求
+
+                        for (let i in data){
+                            content +=  "<li>"
+                            content +=      data[i].title;
+                            content +=      "<input type = 'button' value = '修改' onclick = 'modifyArticle("+data[i].id+")' />";
+                            content +=      "<input type = 'button' value = '删除' onclick = 'deleteArticle("+data[i].id+")' />";
+                            content +=  "</li>";
+                        }
+                        $("#article-list").html(content);
+                    }else {
+                        alert("错误码："+resp.code+"\n错误信息："+resp.message);
+                    }
+                    // let name = resp.data.name;
+                },
+                error:function (req,textStatus,err) {
+                    //err有值，属于js语法报错
+                    if(err != undefined && err != null){
+                        alert(err)
+                    }else{
+                        alert(req.status)
+                    }
+                }
+            });
+        })
+    </script>
+</head>
+<body>
+    <div style="height: 30px; background: cornflowerblue; padding-right: 20px; ">
+<!--        float:漂浮，margin：外边距-->
+<!--        <a href="index.html" style="float: right; margin-right: 20px">注销</a>-->
+        <a href="index.html" style="float: right; ">注销</a>
+    </div>
+    <input type="button" value="新增" onclick="addArticle()" />
+    <ul id="article-list"></ul>
+</body>
+</html>
