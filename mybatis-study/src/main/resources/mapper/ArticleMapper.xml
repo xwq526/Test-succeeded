@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.mapper.ArticleMapper">
+    <resultMap id="BaseResultMap" type="org.example.model.Article">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="view_count" property="viewCount" />
+        <result column="user_id" property="userId" />
+        <result column="create_time" property="createTime" />
+        <association property="user"
+                     columnPrefix="u_"
+                     resultMap="org.example.mapper.UserMapper.BaseResultMap">
+<!--            <id column="user_id" property="id"/>-->
+<!--            <result column="u_create_time" property="createTime"/>-->
+        </association>
+<!--        <association property="user" javaType="org.example.model.User">-->
+<!--            <id column="u_id" property="id" />-->
+<!--            <result column="u_username" property="username" />-->
+<!--            <result column="u_password" property="password" />-->
+<!--            <result column="u_nickname" property="nickname" />-->
+<!--            <result column="u_sex" property="sex" />-->
+<!--            <result column="u_birthday" property="birthday" />-->
+<!--            <result column="u_head" property="head" />-->
+<!--            <result column="u_create_time" property="createTime" />-->
+<!--        </association>-->
+    </resultMap>
+
+    <update id="updateById" parameterType="org.example.model.Article">
+        update article
+            <set>
+                <if test="title != null">
+                    title=#{title},
+                </if>
+                <if test="content != null">
+                    content=#{content},
+                </if>
+            </set>
+
+        where id =#{id}
+    </update>
+
+    <delete id="deleteByUserName" parameterType="java.lang.String">
+        delete article from article,user where user.id = article.user_id
+            and
+        user.username = #{username}
+    </delete>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+            a.id,a.title,a.content,a.view_count,a.user_id,a.create_time,
+            u.id u_id,
+            u.username u_username,
+            u.password u_password,
+            u.nickname u_nickname,
+            u.sex u_sex,
+            u.birthday u_birthday,
+            u.head u_head,
+            u.create_time u_create_time
+        from article a
+            join user u
+                on u.id = a.user_id order by  ${column} ${orderBy}
+    </select>
+</mapper>

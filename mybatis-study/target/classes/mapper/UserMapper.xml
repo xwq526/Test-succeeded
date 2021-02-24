@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间：使用全限定名绑定Mapper接口 -->
+<mapper namespace="org.example.mapper.UserMapper">
+    <!-- 定义结果集映射关系：绑定结果集字段和转换的java对象之间的关系 -->
+    <resultMap id="BaseResultMap" type="org.example.model.User">
+        <!-- 结果集字段和java对象属性的映射 -->
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="nickname" property="nickname" />
+        <result column="sex" property="sex" />
+        <result column="birthday" property="birthday" />
+        <result column="head" property="head" />
+        <result column="create_time" property="createTime" />
+        <collection property="articles"
+                    columnPrefix="a_"
+                    resultMap="org.example.mapper.ArticleMapper.BaseResultMap"/>
+    </resultMap>
+    <!-- 定义SQL语句：id绑定Mapper接口的方法名, parameterType绑定方法参数类型 -->
+    <select id="selectById" parameterType="java.lang.Integer"
+            resultMap="BaseResultMap">
+        select
+            *
+        from user where id=#{id}
+    </select>
+
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        select
+            id,
+            username,
+            password,
+            nickname,
+            sex,
+            birthday,
+            head,
+            create_time
+        from user
+        <where>
+            <if test="username != null">
+                and username like #{username}
+            </if>
+            <if test="sid != null" >
+                and id &gt;= #{sid}
+            </if>
+            <if test="eid != null" >
+                and id &lt;= #{eid}
+            </if>
+        </where>
+
+    </select>
+    <select id="selectByCondition2" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+            id,
+            username,
+            password,
+            nickname,
+            sex,
+            birthday,
+            head,
+            create_time
+        from user where
+            username like #{username}
+    </select>
+    <select id="selectByCondition3" parameterType="org.example.model.User" resultMap="BaseResultMap">
+        select
+            id,
+            username,
+            password,
+            nickname,
+            sex,
+            birthday,
+            head,
+            create_time
+        from user where
+            username like #{username}
+    </select>
+    <insert id="insert" parameterType="org.example.model.User"
+    useGeneratedKeys="true" keyProperty="id">
+        insert into user(
+                         username,
+                         password,
+                         nickname,
+                         sex,
+                         birthday,
+                         head
+                         )
+            values
+        (
+            #{username},
+            #{password},
+            #{nickname},
+            #{sex},
+            #{birthday},
+            #{head}
+        )
+    </insert>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+               a.id a_id,
+               a.title a_title,
+               a.content a_content,
+               a.view_count a_view_count,
+               a.user_id a_user_id,
+               a.create_time a_create_time,
+            u.id,
+            u.username,
+            u.password,
+            u.nickname,
+            u.birthday,
+            u.head,
+            u.create_time
+        from article a
+                 join user u
+                      on u.id = a.user_id
+    </select>
+
+    <delete id="bathchDelete">
+        delete from user where id in
+            <foreach collection="list" item="i" open="(" close=")" separator=",">
+                #{i}
+            </foreach>
+    </delete>
+
+    <insert id="bathchInsert">
+        insert into user
+        (
+            username,
+            password,
+            nickname,
+            sex,
+            birthday,
+            head
+        )
+        VALUES
+        <foreach collection="list" item="u" separator=",">
+            (
+             #{u.username},
+             #{u.password},
+             #{u.nickname},
+             #{u.sex},
+             #{u.birthday},
+             #{u.head}
+            )
+        </foreach>
+    </insert>
+
+</mapper>
